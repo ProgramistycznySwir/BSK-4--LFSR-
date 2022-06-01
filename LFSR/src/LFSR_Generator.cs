@@ -32,7 +32,7 @@ public class LFSR : IEnumerable<bool>
 	public byte GetByte()
 	{
 		byte result = 0;
-		for(int i = 7; i >= 0; i++)
+		for(int i = 7; i >= 0; i--)
 			result |= (byte)((generator.MoveNext() ? 1 : 0) << i);
 		return result;
 	}
@@ -54,6 +54,9 @@ public class LFSR : IEnumerable<bool>
 		
 		return result;
 	}
+
+	public void Reset()
+		=> generator.Reset();
 }
 
 public class LFSR_Generator : IEnumerator<bool>
@@ -72,7 +75,7 @@ public class LFSR_Generator : IEnumerator<bool>
 	}
 
 	object IEnumerator.Current => Current;
-	public bool Current => Convert.ToBoolean(State & 1);
+	public bool Current => Convert.ToBoolean((int)State & 1);
 
 	public void Dispose() { }
 
@@ -92,19 +95,4 @@ public class LFSR_Generator : IEnumerator<bool>
 	{
         State = Seed;
 	}
-}
-
-internal static class BigIntegerExtensions
-{
-    public static string ToNBase(this BigInteger a, int n)
-    {
-        StringBuilder bob = new StringBuilder();
-        while (a > 0)
-        {
-            bob.Insert(0, a % n);
-            a /= n;
-        }
-
-        return bob.ToString();
-    }
 }
