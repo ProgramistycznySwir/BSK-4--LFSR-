@@ -8,57 +8,52 @@ namespace LFSR;
 public class LFSR : IEnumerable<bool>
 {
     public readonly BigInteger Seed;
-    public readonly int[] Taps;
+    public readonly string Polynomial;
+    public readonly HashSet<int> Taps;
 
-    public LFSR(BigInteger seed, int[] _taps)
+	private LFSR_Generator generator;
+
+    public LFSR(BigInteger seed, string polynomial)
     {
-        Taps = _taps;
+		Polynomial = polynomial;
+        Taps = ParsePolynomial(polynomial);
         Seed = seed;
+		generator = new LFSR_Generator(Seed, Taps);
     }
 
-    // public void DecToBin(string text)
-    // {
-    //     int[] numbers = text.Cast<int>().ToArray();
-    //     int maxNumber = numbers.Max();
-    //     var result = numbers.
-    // }
-
-	// function* lfsr (taps: Set<number>, startingState: number)
-	// {
-	//     const max = Math.max(...taps)
-
-	//     const tapsArray = [...taps]
-
-	//     // NOTE: Limit startingState to only max + 1 bits
-	//     let lfsr = startingState & ((1 << (max + 1)) - 1)
-
-	//     while (true) {
-	//         yield lfsr & 1
-
-	//         // NOTE: Add missing zeros to the beginning of the binary string
-	//         const binaryString = lfsr.toString(2).padStart(max + 1, '0')
-
-	//         let bit = +binaryString[max - tapsArray[1]] ^ +binaryString[max - tapsArray[0]]
-	//         for (const tap of tapsArray.slice(2)) {
-	//         bit ^= +binaryString[max - tap]
-	//         }
-
-	//         lfsr >>= 1
-	//         lfsr |= bit << max
-	//     }
-	//     }
-
-	//     export default (polynomial: string, startingState: number = 0xdeadbeef) => {
-	//     const taps = compilePolynomial(polynomial)
-	//     return lfsr(taps, startingState)
-	// }
 	IEnumerator<bool> IEnumerable<bool>.GetEnumerator()
         => GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 
 	public LFSR_Generator GetEnumerator()
-        => new LFSR_Generator(Seed, Taps);
+        => generator;
+
+	public byte GetByte()
+	{
+		byte result = 0;
+		for(int i = 7; i >= 0; i++)
+			result |= (byte)((generator.MoveNext() ? 1 : 0) << i);
+		return result;
+	}
+
+	// Polynomial format: 32 2 13 => x^32 + x^13 + x^2 + 1
+	//	(last constant one is assumed by default)
+	//	(order of exponents is arbitral)
+	//	(only primitive polynomials are accepted)
+	public HashSet<int> ParsePolynomial(string rawPolynomial)
+	{
+		const string ExponentsSeparator = " ";
+		var result = new HashSet<int>();
+		foreach (string rawExponent in rawPolynomial.Split(ExponentsSeparator))
+			result.Add(int.Parse(rawExponent));
+		result.Add(0); // Add constant one
+		
+		if(result.Count < 2)
+			throw new ArgumentException($"Couldn't parse polynomial: {rawPolynomial}");
+		
+		return result;
+	}
 }
 
 public class LFSR_Generator : IEnumerator<bool>
@@ -68,10 +63,10 @@ public class LFSR_Generator : IEnumerator<bool>
 	private int taps_Max;
     public BigInteger State { get; private set; }
 
-	public LFSR_Generator(BigInteger seed, int[] taps)
+	public LFSR_Generator(BigInteger seed, HashSet<int> taps)
 	{
         Seed = seed;
-		this.taps = taps;
+		this.taps = taps.ToArray();
         taps_Max = taps.Max();
         State = Seed & ((1 << (taps_Max + 1)) - 1);
 	}
@@ -83,8 +78,13 @@ public class LFSR_Generator : IEnumerator<bool>
 
 	public bool MoveNext()
 	{
-        State = State & ((1 << (taps_Max + 1)) - 1);
-        ToNBase()
+        // State = State & ((1 << (taps_Max + 1)) - 1);
+        string State_string = State.ToNBase(2).PadLeft(taps_Max + 1, '0');
+		int bit = 0;
+		foreach (int tap in taps)
+			bit ^= State_string[taps_Max - tap];
+		State >>= 1;
+		State |= bit << taps_Max;
         return Current;
 	}
 
