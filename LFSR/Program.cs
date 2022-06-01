@@ -45,7 +45,7 @@ LFSR_Encryptor encryptor = new(seed, polynomial);
 while(true)
 {
 	Write("Wpisz ścieżkę pliku do zaszyfrowania: ");
-	string filePath = ReadLine();
+	string filePath = ReadLine()!;
 	if(File.Exists(filePath) is false)
 	{
 		Console.ForegroundColor = ConsoleColor.DarkRed;
