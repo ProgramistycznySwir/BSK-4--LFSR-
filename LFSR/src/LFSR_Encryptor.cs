@@ -31,14 +31,8 @@ public class LFSR_Encryptor
 		
 		using(var inputFile = new BinaryReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read)))
 		using(var outputFile = new BinaryWriter(new FileStream(outputFilePath, FileMode.Create, FileAccess.Write)))
-		{
 			while (inputFile.BaseStream.Position != inputFile.BaseStream.Length)
-			{
-				byte inputByte = inputFile.ReadByte();
-				byte outputByte = ShiftByte(inputByte);
-				outputFile.Write(outputByte);
-			}
-		}
+				outputFile.Write(ShiftByte(inputFile.ReadByte()));
 	}
 	private byte ShiftByte(byte inputByte)
 		=> (byte)(inputByte ^ _lsfr.GetByte());

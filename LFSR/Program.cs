@@ -1,24 +1,49 @@
-﻿using LFSR;
-using Main;
+﻿using System.IO;
+using System.Numerics;
+using LFSR;
 using static System.Console;
 
 
-// See https://aka.ms/new-console-template for more information
-WriteLine();
-
-// WriteLine("Podaj kolejne współczynniki wielomianu numerując od potęgi 0. Oddzielaj je przy pomocy spacji. " + 
-// "Przykład, dla wielomianu f(x) = 1 + 3 * x^2 + 2 * x^3 wprowadź \"1 0 3 2\" i zatwierdź [ENTER]");
-WriteLine(":");
+BigInteger DefaultSeed = 1234567890;
+const string DefaultPolynomial = "32 44 12";
 
 
-// string rawInput = ReadLine();
+WriteLine("Podaj wartość seed generatora (dowolną liczbę całkowitą) i zatwierdź [ENTER].\n" + 
+$"  możesz także wcisnąć zwyczajnie [ENTER] wtedy zostanie zostawiona wartość domyślna: ({DefaultSeed}).");
+Write(": ");
+string rawSeed = ReadLine()!;
+BigInteger seed;
+if(rawSeed is "")
+	seed = DefaultSeed;
+else
+	seed = BigInteger.Parse(rawSeed!);
 
-// List<float> polynomial = rawInput.Split(' ').Select(x => float.Parse(x));
+WriteLine("Podaj kolejne potęgi wielomianu. Oddzielaj je przy pomocy spacji i zatwierdź [ENTER].\n" + 
+"  Przykład: dla wielomianu f(x) = x^32 + x^2 + x^14 + 1 wprowadź \"32 2 14 \" (stała jedynka jest dodawana domyślnie)\n" + 
+$"  możesz także wcisnąć zwyczajnie [ENTER] wtedy zostanie użyta wartość domyślna ({DefaultPolynomial})");
+Write(": ");
+string polynomial = ReadLine()!;
+if(polynomial is "")
+	polynomial = DefaultPolynomial;
 
-const long seed = 1234567890;
-const string polynomial = "32 44 12";
 LFSR_Encryptor encryptor = new(seed, polynomial);
 
-encryptor.ShiftFile("./test.txt");
-encryptor.ShiftFile("./test_out.txt");
+while(true)
+{
+	Write("Wpisz ścieżkę pliku do zaszyfrowania: ");
+	string filePath = ReadLine();
+	if(File.Exists(filePath) is false)
+	{
+		Console.ForegroundColor = ConsoleColor.DarkRed;
+		Console.WriteLine("Nie ma takiego pliku!");
+		Console.ResetColor();
+		continue;
+	}
+
+	encryptor.ShiftFile(filePath);
+	
+	Console.ForegroundColor = ConsoleColor.Green;
+	Console.WriteLine("Pomyślnie zaszyfrowano plik!");
+	Console.ResetColor();
+}
 
