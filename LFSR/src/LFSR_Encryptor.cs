@@ -27,7 +27,7 @@ public class LFSR_Encryptor
 	{
 		Reset();
 		if(outputFilePath is null)
-			outputFilePath = $"{Path.GetFileNameWithoutExtension(inputFilePath)}_out{Path.GetExtension(inputFilePath)}";
+			outputFilePath = GetOutputFilePath(inputFilePath);
 		
 		using(var inputFile = new BinaryReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read)))
 		using(var outputFile = new BinaryWriter(new FileStream(outputFilePath, FileMode.Create, FileAccess.Write)))
@@ -39,4 +39,7 @@ public class LFSR_Encryptor
 
 	public void Reset()
 		=> _lsfr.Reset();
+
+	public static string GetOutputFilePath(string inputFilePath)
+		=> $"{Path.GetFileNameWithoutExtension(inputFilePath)}_out{Path.GetExtension(inputFilePath)}";
 }

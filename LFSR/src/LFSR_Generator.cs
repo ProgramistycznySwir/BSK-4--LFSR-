@@ -33,7 +33,7 @@ public class LFSR : IEnumerable<bool>
 	{
 		byte result = 0;
 		for(int i = 7; i >= 0; i--)
-			result |= (byte)((generator.MoveNext() ? 1 : 0) << i);
+			result |= (byte)((generator.PopMoveNext() ? 1 : 0) << i);
 		return result;
 	}
 
@@ -88,7 +88,7 @@ public class LFSR_Generator : IEnumerator<bool>
 			bit ^= State_string[taps_Max - tap];
 		State >>= 1;
 		State |= bit << taps_Max;
-        return Current;
+        return true;
 	}
 
 	public void Reset()
