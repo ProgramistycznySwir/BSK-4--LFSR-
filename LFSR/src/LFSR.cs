@@ -16,7 +16,7 @@ public class LFSR : IEnumerable<bool>
     {
 		Polynomial = polynomial;
         Taps = ParsePolynomial(polynomial);
-        Seed = seed;
+        Seed = ParseSeed(seed, Taps.Max());
 		generator = new LFSR_Generator(Seed, Taps);
     }
 
@@ -36,8 +36,8 @@ public class LFSR : IEnumerable<bool>
 		return result;
 	}
 
-	internal static bool[] ParseSeed(string seed)
-		=> seed.Select(e => e is '1').ToArray();
+	internal static bool[] ParseSeed(string seed, int lenght)
+		=> seed.Select(e => e is '1').Take(lenght).ToArray();
 
 	// Polynomial format: 32 2 13 => x^32 + x^13 + x^2 + 1
 	//	(last constant one is assumed by default)

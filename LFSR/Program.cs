@@ -12,7 +12,7 @@ return;
 void Test() {
 	// Arrange:
 	var input = "111010011110111";
-	var seed = 2;
+	var seed = "10";
 	var polynomial = "3";
 	var output_Expected = "100100110010011";
 
@@ -22,7 +22,7 @@ void Test() {
 	var bob = new StringBuilder();
 	foreach(char item in input)
 	{
-		Console.Write($"{gen.State.ToBase(2).PadLeft(gen.taps_Max + 2, '0')} ->");
+		// Console.Write($"{gen.State.ToBase(2).PadLeft(gen.taps_Max + 2, '0')} ->");
 		byte bit = Convert.ToByte(gen.PopMoveNext());
 		Console.Write(bit);
 		bob.Append(((item ^ bit) & 1) is 0 ? 0 : 1);
