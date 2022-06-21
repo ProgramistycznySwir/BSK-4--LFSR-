@@ -19,6 +19,9 @@ public class RotaryList<T> : IList<T>
     public T First => this[0];
     public T Last => this[-1];
 
+    public bool IsEmpty => Count <= 0;
+    public bool IsFull => Count >= Capacity;
+
 	public bool IsReadOnly => false; // TODO: In future make it also immutable.
 
     public RotaryList(IEnumerable<T> seed)
@@ -37,7 +40,7 @@ public class RotaryList<T> : IList<T>
     /// <summary> Adds as last element </summary>
 	public void Add(T item)
 	{
-        if(Count >= Capacity)
+        if(IsFull)
             Expand();
         Count++;
         this[-1] = item;
@@ -51,11 +54,7 @@ public class RotaryList<T> : IList<T>
         Count++;
 	}
 
-	public void Clear()
-	{
-        FirstIdx = 0;
-        Count = 0;
-	}
+	public void Clear() => (FirstIdx, Count) = (0, 0);
 
 	public bool Contains(T item) => this.Contains(item);
 
@@ -110,6 +109,14 @@ public class RotaryList<T> : IList<T>
 	{
 		throw new NotImplementedException();
 	}
+
+    /// <summary> Fluent </summary>
+    public RotaryList<T> Fill(T value)
+    {
+        while(IsFull is false)
+            Add(value);
+        return this;
+    }
 
 
     /// <param name="by">By default container's capacity is doubled.</param>

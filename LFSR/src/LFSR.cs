@@ -46,10 +46,7 @@ public class LFSR : IEnumerable<bool>
 	internal static HashSet<int> ParsePolynomial(string rawPolynomial)
 	{
 		const string ExponentsSeparator = " ";
-		var result = new HashSet<int>();
-		foreach (string rawExponent in rawPolynomial.Split(ExponentsSeparator))
-			result.Add(int.Parse(rawExponent));
-		result.Add(0); // Add constant one
+		var result = rawPolynomial.Split(ExponentsSeparator).Select(e => int.Parse(e) - 1).ToHashSet();
 		
 		if(result.Count < 2)
 			throw new ArgumentException($"Couldn't parse polynomial: {rawPolynomial}");

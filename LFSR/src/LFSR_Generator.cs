@@ -20,6 +20,7 @@ public class LFSR_Generator : IEnumerator<bool>
 	}
 
 	object IEnumerator.Current => Current;
+	// public bool Current => State.First;
 	public bool Current => State.Last;
 
 	public void Dispose() { }
@@ -28,7 +29,9 @@ public class LFSR_Generator : IEnumerator<bool>
 	{
 		bool bit = false;
 		foreach (int tap in taps)
-			bit ^= State[tap + 1];
+			bit ^= State[tap];
+		// State.RemoveLast();
+		// State.AddFirst(bit);
 		State.RemoveLast();
 		State.AddFirst(bit);
         return true;
@@ -43,6 +46,10 @@ public class LFSR_Generator : IEnumerator<bool>
 
 	public void Reset()
 	{
-		State = new(Seed);
+		State = (new RotaryList<bool>(Seed, taps_Max + 1)).Fill(false);
+		// MoveNext((uint)taps_Max + 1);
+		// 00000000000000000111101011001101
+		// 32
+		// MoveNext(32);
 	}
 }

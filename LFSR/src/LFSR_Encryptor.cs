@@ -9,12 +9,12 @@ namespace LFSR;
 
 public class LFSR_Encryptor
 {
-    public readonly BigInteger Seed;
+    public readonly string Seed;
     public readonly string Polynomial;
 
 	private LFSR _lsfr;
 
-    public LFSR_Encryptor(BigInteger seed, string polynomial)
+    public LFSR_Encryptor(string seed, string polynomial)
     {
 		Polynomial = polynomial;
         Seed = seed;

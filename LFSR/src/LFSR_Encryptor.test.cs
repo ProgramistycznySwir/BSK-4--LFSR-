@@ -9,8 +9,8 @@ namespace LFSR;
 
 public class LFSR_Encryptor_Test
 {
-    [Theory]
-	[InlineData("111010011110111", "10", "3", "100100110010011")]
+    // [Theory]
+	// [InlineData("111010011110111", "10", "4 1", "100100110010011")]
 	public void ShiftFile_TowWayEncryption(string input, string seed_string, string polynomial, string output_Expected)
 	{
 		//TODO: Implement tests

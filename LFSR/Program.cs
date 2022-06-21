@@ -5,36 +5,21 @@ using LFSR;
 using LFSR.Helpers;
 using static System.Console;
 
-// Console.WriteLine(FormatInterOP.Polynomial_MyToBin("32 44 12"));
-// byte
-Console.WriteLine(new BigInteger(~(1u << 3)).ToBase(2).PadLeft(3 + 1, '0'));
+
+Console.WriteLine(FormatInterOP.Polynomial_MyToBin("32 44 12"));
 return;
 void Test() {
-	// Arrange:
-	var input = "111010011110111";
-	var seed = "10";
-	var polynomial = "3";
-	var output_Expected = "100100110010011";
-
+	var seed = "1000";
+	var polynomial = "4 1";
 	var lfsr = new LFSR.LFSR(seed, polynomial);
 	var gen = lfsr.GetEnumerator();
-	// Act:
-	var bob = new StringBuilder();
-	foreach(char item in input)
+	while(true)
 	{
-		// Console.Write($"{gen.State.ToBase(2).PadLeft(gen.taps_Max + 2, '0')} ->");
-		byte bit = Convert.ToByte(gen.PopMoveNext());
-		Console.Write(bit);
-		bob.Append(((item ^ bit) & 1) is 0 ? 0 : 1);
-		Console.WriteLine();
+		bool bit = gen.Current;
+		Console.WriteLine($"{string.Join("", gen.State.Select(e => e?1:0))} -> {bit}");
+		Console.ReadKey(true);
+		gen.MoveNext();
 	}
-	var output = bob.ToString();
-	// Assert:
-	Console.WriteLine(output_Expected);
-	Console.WriteLine(output);
-	Console.WriteLine("000101100001000");
-	Console.WriteLine(output_Expected.Equals(output));
-	// Assert.Equal(output_Expected, output);
 }
 Test();
 
@@ -47,11 +32,11 @@ WriteLine("Podaj wartość seed generatora (dowolną liczbę całkowitą) i zatw
 $"  możesz także wcisnąć zwyczajnie [ENTER] wtedy zostanie zostawiona wartość domyślna: ({DefaultSeed}).");
 Write(": ");
 string rawSeed = ReadLine()!;
-BigInteger seed;
-if(rawSeed is "")
-	seed = DefaultSeed;
-else
-	seed = BigInteger.Parse(rawSeed!);
+// BigInteger seed;
+// if(rawSeed is "")
+// 	seed = DefaultSeed;
+// else
+// 	seed = BigInteger.Parse(rawSeed!);
 
 WriteLine("Podaj kolejne potęgi wielomianu. Oddzielaj je przy pomocy spacji i zatwierdź [ENTER].\n" + 
 "  Przykład: dla wielomianu f(x) = x^32 + x^2 + x^14 + 1 wprowadź \"32 2 14 \" (stała jedynka jest dodawana domyślnie)\n" + 
@@ -69,14 +54,14 @@ switch (mode)
 {
 	case '1': break;
 	case '2': {
-			foreach(bool bit in new LFSR.LFSR(seed, polynomial))
+			foreach(bool bit in new LFSR.LFSR(rawSeed, polynomial))
 				Write(bit ? '1' : '0');
 			return;
 		}
 	default: WriteLine("Zły wybór, zamykam program."); return;
 }
 
-LFSR_Encryptor encryptor = new(seed, polynomial);
+LFSR_Encryptor encryptor = new(rawSeed, polynomial);
 
 while(true)
 {
