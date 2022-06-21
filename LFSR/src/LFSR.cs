@@ -6,13 +6,13 @@ namespace LFSR;
 
 public class LFSR : IEnumerable<bool>
 {
-    public readonly BigInteger Seed;
+    public readonly bool[] Seed;
     public readonly string Polynomial;
     public readonly HashSet<int> Taps;
 
 	private LFSR_Generator generator;
 
-    public LFSR(BigInteger seed, string polynomial)
+    public LFSR(string seed, string polynomial)
     {
 		Polynomial = polynomial;
         Taps = ParsePolynomial(polynomial);
@@ -36,11 +36,14 @@ public class LFSR : IEnumerable<bool>
 		return result;
 	}
 
+	internal static bool[] ParseSeed(string seed)
+		=> seed.Select(e => e is '1').ToArray();
+
 	// Polynomial format: 32 2 13 => x^32 + x^13 + x^2 + 1
 	//	(last constant one is assumed by default)
-	//	(order of exponents is arbitral)
+	//	(order of exponents is arbitrary)
 	//	(only primitive polynomials are accepted)
-	private static HashSet<int> ParsePolynomial(string rawPolynomial)
+	internal static HashSet<int> ParsePolynomial(string rawPolynomial)
 	{
 		const string ExponentsSeparator = " ";
 		var result = new HashSet<int>();

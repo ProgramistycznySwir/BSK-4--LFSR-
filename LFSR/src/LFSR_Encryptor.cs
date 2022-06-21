@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using System.Linq;
 
 namespace LFSR;
 
@@ -34,7 +35,7 @@ public class LFSR_Encryptor
 			while (inputFile.BaseStream.Position != inputFile.BaseStream.Length)
 				outputFile.Write(ShiftByte(inputFile.ReadByte()));
 	}
-	private byte ShiftByte(byte inputByte)
+	public byte ShiftByte(byte inputByte)
 		=> (byte)(inputByte ^ _lsfr.GetByte());
 
 	public void Reset()

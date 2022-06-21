@@ -10,14 +10,20 @@ namespace LFSR;
 public class LFSR_Encryptor_Test
 {
     [Theory]
-    [InlineData(58307422, "6 4 2")]
-    [InlineData(1234567890, "32 44 12")]
-	public void ShiftFile_TowWayEncryption(BigInteger seed, string polynomial)
+	[InlineData("111010011110111", "2", "3", "100100110010011")]
+	public void ShiftFile_TowWayEncryption(string input, string seed_string, string polynomial, string output_Expected)
 	{
 		//TODO: Implement tests
 		// Arrange:
+		BigInteger seed = BigInteger.Parse(seed_string);
+		var lfsr = new LFSR(seed, polynomial);
+		var gen = lfsr.GetEnumerator();
 		// Act:
+		var bob = new StringBuilder();
+		foreach(char item in input)
+			bob.Append(((item ^ Convert.ToByte(gen.PopMoveNext())) & 1) is 0 ? 0 : 1);
+		var output = bob.ToString();
 		// Assert:
-		// // Clean Up:
+		Assert.Equal(output_Expected, output);
 	}
 }

@@ -1,8 +1,44 @@
 ﻿using System.IO;
 using System.Numerics;
+using System.Text;
 using LFSR;
+using LFSR.Helpers;
 using static System.Console;
 
+// Console.WriteLine(FormatInterOP.Polynomial_MyToBin("32 44 12"));
+// byte
+Console.WriteLine(new BigInteger(~(1u << 3)).ToBase(2).PadLeft(3 + 1, '0'));
+return;
+void Test() {
+	// Arrange:
+	var input = "111010011110111";
+	var seed = 2;
+	var polynomial = "3";
+	var output_Expected = "100100110010011";
+
+	var lfsr = new LFSR.LFSR(seed, polynomial);
+	var gen = lfsr.GetEnumerator();
+	// Act:
+	var bob = new StringBuilder();
+	foreach(char item in input)
+	{
+		Console.Write($"{gen.State.ToBase(2).PadLeft(gen.taps_Max + 2, '0')} ->");
+		byte bit = Convert.ToByte(gen.PopMoveNext());
+		Console.Write(bit);
+		bob.Append(((item ^ bit) & 1) is 0 ? 0 : 1);
+		Console.WriteLine();
+	}
+	var output = bob.ToString();
+	// Assert:
+	Console.WriteLine(output_Expected);
+	Console.WriteLine(output);
+	Console.WriteLine("000101100001000");
+	Console.WriteLine(output_Expected.Equals(output));
+	// Assert.Equal(output_Expected, output);
+}
+Test();
+
+return;
 
 BigInteger DefaultSeed = 1234567890;
 const string DefaultPolynomial = "32 44 12";
